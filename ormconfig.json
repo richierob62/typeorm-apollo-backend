@@ -1,0 +1,41 @@
+[
+  {
+    "name": "development",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "",
+    "database": "boilerplate_dev",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["entity/**/*.ts"],
+    "migrations": ["migration/**/*.ts"],
+    "subscribers": ["subscriber/**/*.ts"],
+    "cli": {
+      "entitiesDir": "entity",
+      "migrationsDir": "migration",
+      "subscribersDir": "subscriber"
+    }
+  },
+  {
+    "name": "testing",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "",
+    "database": "boilerplate_test",
+    "synchronize": true,
+    "logging": false,
+    "dropSchema": true,
+    "entities": ["entity/**/*.ts"],
+    "migrations": ["migration/**/*.ts"],
+    "subscribers": ["subscriber/**/*.ts"],
+    "cli": {
+      "entitiesDir": "entity",
+      "migrationsDir": "migration",
+      "subscribersDir": "subscriber"
+    }
+  }
+]

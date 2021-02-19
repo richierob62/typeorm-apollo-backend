@@ -1,0 +1,43 @@
+{
+  "name": "node-ts-graphql-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=development ts-node-dev --no-notify --respawn --ignore-watch node_modules index.ts",
+    "test-db": "ts-node ./utils/tests/setup.ts",
+    "test-server": "NODE_ENV=test ts-node-dev --respawn --ignore-watch node_modules index.ts",
+    "test": "NODE_ENV=test npm run test-db && jest --watch --runInBand"
+  },
+  "jest": {
+    "verbose": true
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.7",
+    "@types/express": "^4.17.8",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^8.10.63",
+    "jest": "^25.5.4",
+    "ts-jest": "^25.5.1",
+    "ts-node": "3.3.0",
+    "ts-node-dev": "^1.0.0-pre.62",
+    "tslint": "^5.9.1",
+    "tslint-config-prettier": "^1.9.0",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.17.0",
+    "class-validator": "^0.12.2",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.1.0",
+    "mysql": "^2.14.1",
+    "reflect-metadata": "^0.1.10",
+    "type-graphql": "^1.0.0",
+    "typeorm": "0.2.24"
+  }
+}
