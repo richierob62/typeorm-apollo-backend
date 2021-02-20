@@ -36,9 +36,10 @@ const startServer = async (port: string) => {
 
   server.applyMiddleware({ app, cors: false });
 
-  app.listen({ port }, () =>
-    console.log(`Server ready at http://localhost:${port}`)
-  );
+  app.listen({ port }, () => {
+    console.log(`Server ready at http://localhost:${port}`);
+    console.log('========================================');
+  });
 };
 
 export default startServer;

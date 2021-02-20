@@ -34,8 +34,11 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "firebase": "^8.2.9",
+    "firebase-admin": "^9.5.0",
     "graphql": "^15.1.0",
     "mysql": "^2.14.1",
+    "nookies": "^2.5.2",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^1.0.0",
     "typeorm": "0.2.24"
