@@ -1,5 +1,9 @@
 const admin = require('firebase-admin');
 
+import { Context } from '../../types/resolver_types';
+import { User } from '../../entity/User';
+import nookies from 'nookies';
+
 const serviceAccount = {
   type: process.env.FIREBASE_TYPE,
   project_id: process.env.FIREBASE_PROJECT_ID,
@@ -13,7 +17,7 @@ const serviceAccount = {
   client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT,
 };
 
-export const verifyIdToken = (token: string) => {
+export const verifyToken = (token: string) => {
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
@@ -25,7 +29,30 @@ export const verifyIdToken = (token: string) => {
   return admin
     .auth()
     .verifyIdToken(token)
-    .catch((e: any) => {
-      throw e;
+    .catch(() => {
+      return undefined;
     });
+};
+
+export const getCurrentUser = async (
+  ctx: Context
+): Promise<User | undefined> => {
+  const cookies = nookies.get(ctx);
+
+  const token = await verifyToken(cookies.token);
+
+  if (!token) return undefined;
+
+  let user = await User.findOne({ id: token.user_id });
+
+  if (!user) {
+    user = new User();
+    user.id = token.user_id;
+    user.email = token.email;
+    user.name = token.name || '';
+    user.email_verified = token.email_verified;
+    user.save();
+  }
+
+  return user;
 };

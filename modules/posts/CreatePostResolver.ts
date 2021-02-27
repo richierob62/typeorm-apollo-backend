@@ -4,6 +4,7 @@ import { Context } from '../../types/resolver_types';
 import { PostInput } from '../../types/type-graphql_types';
 import { Post } from '../../entity/Post';
 import { isAuthenticated } from '../../middleware/is_authenticated';
+import { getCurrentUser } from '../../utils/auth/FirebaseAdmin';
 
 @Resolver()
 export class CreatePostResolver {
@@ -11,21 +12,16 @@ export class CreatePostResolver {
   @Mutation(() => Post)
   async createPost(
     @Arg('data') data: PostInput,
-    @Ctx() { req }: Context
+    @Ctx() ctx: Context
   ): Promise<Post> {
-    console.log(data);
-    console.log(req);
-    const post = new Post();
+    const user = await getCurrentUser(ctx);
 
-    // const user = await User.findOne({ where: { id: req?.session?.userId} });
+    if (!user) throw new Error('not authorized');
 
-    // if (!user)
-    // throw new Error('not authorized');
+    const post = Post.create(data);
+    post.user = user;
 
-    // const post = Post.create(data);
-    // post.user = user
-
-    // await post.save()
+    await post.save();
 
     return post;
   }

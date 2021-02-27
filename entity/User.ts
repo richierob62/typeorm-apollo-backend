@@ -13,6 +13,18 @@ export class User extends BaseEntity {
   @PrimaryColumn()
   id: string;
 
+  @Field(() => String)
+  @Column({ type: 'varchar', length: '100' })
+  email: string;
+
+  @Field(() => Boolean)
+  @Column({ type: 'boolean' })
+  email_verified: boolean;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', length: '100', nullable: true })
+  name: string | null;
+
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', length: '100', nullable: true })
   firstName: string | null;
