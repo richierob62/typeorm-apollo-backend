@@ -1,22 +1,20 @@
-// import { Comment } from '../entity/Comment';
+import { Comment } from '../entity/Comment';
 import { Context } from '../types/resolver_types';
 import { MiddlewareFn } from 'type-graphql';
+import { getCurrentUser } from '../utils/auth/FirebaseAdmin';
 
 export const isCommentOwner: MiddlewareFn<Context> = async (
   { args, context },
   next
 ) => {
-  // const id = args.data ? args.data.id : args.id;
+  const id = args.data ? args.data.id : args.id;
 
-  // get user with firebase
-  console.log(args);
-  console.log(context);
+  const user = await getCurrentUser(context);
 
-  // const userId = context.req.session?.userId;
+  const comment = await Comment.findOne(id, { relations: ['user'] });
 
-  // const comment = await Comment.findOne(id, { relations: ['user'] });
-
-  // if (!comment || comment.user.id !== userId) throw new Error('not authorized');
+  if (!user || !comment || comment.user.id !== user.id)
+    throw new Error('not authorized');
 
   return next();
 };

@@ -1,10 +1,10 @@
-import { User } from '../../entity/User';
 import { Mutation, Resolver, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import { Context } from '../../types/resolver_types';
 import { CommentInput } from '../../types/type-graphql_types';
 import { Comment } from '../../entity/Comment';
 import { isAuthenticated } from '../../middleware/is_authenticated';
 import { Post } from '../../entity/Post';
+import { getCurrentUser } from '../../utils/auth/FirebaseAdmin';
 
 @Resolver()
 export class CreateCommentResolver {
@@ -12,18 +12,16 @@ export class CreateCommentResolver {
   @Mutation(() => Comment)
   async createComment(
     @Arg('data') data: CommentInput,
-    @Ctx() { req }: Context
+    @Ctx() ctx: Context
   ): Promise<Comment> {
-    // const user = await User.findOne({ where: { id: req?.session?.userId } });
-
-    console.log(req);
-
-    // get user with firebase
-    const user = new User();
+    const user = await getCurrentUser(ctx);
 
     if (!user) throw new Error('not authorized');
 
-    const post = await Post.findOne({ where: { id: data.postId } });
+    const post = await Post.findOne({
+      where: { id: data.postId },
+      relations: ['user', 'comments', 'votes'],
+    });
 
     if (!post) throw new Error('post not found');
 
