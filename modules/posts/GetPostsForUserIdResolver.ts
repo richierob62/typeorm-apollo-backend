@@ -6,7 +6,7 @@ export class GetPostsForUserIdResolver {
   @Query(() => [Post])
   async allPostsForUserId(@Arg('userId') userId: string): Promise<Post[]> {
     const posts = await Post.find({
-      relations: ['user', 'comments', 'votes'],
+      relations: ['user', 'comments', 'comments.votes', 'votes'],
       where: { userId },
     });
 

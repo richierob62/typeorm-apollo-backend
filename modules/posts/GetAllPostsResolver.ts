@@ -6,7 +6,9 @@ import { Post } from '../../entity/Post';
 export class GetAllPostsResolver {
   @Query(() => [Post])
   async allPosts(): Promise<Post[]> {
-    const posts = await Post.find({ relations: ['user', 'comments', 'votes'] });
+    const posts = await Post.find({
+      relations: ['user', 'comments', 'comments.votes', 'votes'],
+    });
 
     return posts;
   }

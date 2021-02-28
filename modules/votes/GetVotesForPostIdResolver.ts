@@ -7,7 +7,7 @@ export class GetVotesForPostIdResolver {
   async allVotesForPostId(@Arg('postId') postId: number): Promise<Vote[]> {
     const votes = await Vote.find({
       where: { post: postId },
-      relations: ['user', 'post', 'comment'],
+      relations: ['user', 'post'],
     });
 
     return votes;

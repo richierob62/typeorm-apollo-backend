@@ -20,7 +20,6 @@ export class CreateCommentResolver {
 
     const post = await Post.findOne({
       where: { id: data.postId },
-      relations: ['user', 'comments', 'votes'],
     });
 
     if (!post) throw new Error('post not found');

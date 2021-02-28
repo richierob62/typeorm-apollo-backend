@@ -1,11 +1,11 @@
-import { User } from '../../entity/User';
 import { Mutation, Resolver, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import { Context } from '../../types/resolver_types';
 import { VoteInput } from '../../types/type-graphql_types';
 import { Vote } from '../../entity/Vote';
 import { isAuthenticated } from '../../middleware/is_authenticated';
-import { Comment } from '../../entity/Comment';
+import { getCurrentUser } from '../../utils/auth/FirebaseAdmin';
 import { Post } from '../../entity/Post';
+import { Comment } from '../../entity/Comment';
 
 @Resolver()
 export class CreateVoteResolver {
@@ -13,34 +13,69 @@ export class CreateVoteResolver {
   @Mutation(() => Vote)
   async createVote(
     @Arg('data') data: VoteInput,
-    @Ctx() { req }: Context
+    @Ctx() ctx: Context
   ): Promise<Vote> {
-    const { type, commentId, postId } = data;
-
-    // const user = await User.findOne({ where: { id: req?.session?.userId } });
-    const user = new User();
-    console.log(req);
+    const user = await getCurrentUser(ctx);
 
     if (!user) throw new Error('not authorized');
 
-    const vote = Vote.create({
-      type,
-      user,
-    });
+    const { type, postId, commentId } = data;
 
-    // comment or post?
-    if (type === 'comment') {
-      const comment = await Comment.findOne({ where: { id: commentId } });
-      if (!comment) throw new Error('comment not found');
-      vote.comment = comment;
-    } else {
-      const post = await Post.findOne({ where: { id: postId } });
+    let newVote = new Vote();
+
+    if (type === 'post' && postId) {
+      const post = await Post.findOne({
+        where: { id: postId },
+        relations: ['user', 'comments', 'votes'],
+      });
+
       if (!post) throw new Error('post not found');
-      vote.post = post;
+
+      const existingVote = await Vote.findOne({
+        where: { user: user, post: postId },
+      });
+
+      if (existingVote) throw new Error('duplicate vote');
+
+      newVote.type = 'post';
+      newVote.post = post;
+      newVote.user = user;
+      newVote = await newVote.save();
+      const v = await Vote.findOne({
+        where: { id: newVote.id },
+        relations: ['user', 'post'],
+      });
+
+      return v!;
     }
 
-    await vote.save();
+    if (type === 'comment' && commentId) {
+      const comment = await Comment.findOne({
+        where: { id: commentId },
+        relations: ['user'],
+      });
 
-    return vote;
+      if (!comment) throw new Error('comment not found');
+
+      const existingVote = await Vote.findOne({
+        where: { user: user, comment: commentId },
+      });
+
+      if (existingVote) throw new Error('duplicate vote');
+
+      newVote.type = 'comment';
+      newVote.comment = comment;
+      newVote.user = user;
+      newVote = await newVote.save();
+
+      const v = await Vote.findOne({
+        where: { id: newVote.id },
+        relations: ['comment', 'user'],
+      });
+
+      return v!;
+    }
+
+    throw new Error('type or id is missing');
   }
 }

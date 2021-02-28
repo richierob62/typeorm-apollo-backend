@@ -9,7 +9,7 @@ export class GetVotesForCommentIdResolver {
   ): Promise<Vote[]> {
     const votes = await Vote.find({
       where: { comment: commentId },
-      relations: ['user', 'post', 'comment'],
+      relations: ['user', 'comment'],
     });
 
     return votes;

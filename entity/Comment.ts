@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType, Root } from 'type-graphql';
 
 import { Post } from './Post';
 import { User } from './User';
@@ -35,4 +35,10 @@ export class Comment extends BaseEntity {
   @Field(() => [Vote])
   @OneToMany(() => Vote, (vote) => vote.comment)
   votes: Vote[];
+
+  // Calculated fields
+  @Field(() => Number)
+  numVotes(@Root() parent: Comment) {
+    return parent.votes.length;
+  }
 }
