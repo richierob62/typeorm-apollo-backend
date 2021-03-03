@@ -14,12 +14,12 @@ const startServer = async (port: string) => {
 
   // cors
   // -----------------------------------------------------------------------
-  const corsOptions = {
-    credentials: true,
-    origin: process.env.TESTING ? '*' : process.env.FRONT_END_DOMAIN,
-  };
+  // const corsOptions = {
+  //   credentials: true,
+  //   origin: process.env.TESTING ? '*' : process.env.FRONT_END_DOMAIN,
+  // };
   app.set('trust proxy', true);
-  app.use(cors(corsOptions));
+  app.use(cors());
 
   // graphql server
   // -----------------------------------------------------------------------
